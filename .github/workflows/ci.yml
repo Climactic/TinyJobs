@@ -1,9 +1,7 @@
-name: CLI - CI
+name: CI
 
 on:
   push:
-    paths:
-      - "cli/**"
     branches: ["main"]
   pull_request:
     types: [opened, synchronize]
