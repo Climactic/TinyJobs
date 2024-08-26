@@ -1,10 +1,9 @@
 {
-  "name": "@tinyjobs/cli",
+  "name": "@tinyjobs/core",
   "version": "0.0.1",
   "private": false,
-  "bin": {
-    "tinyjobs": "dist/index.js"
-  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts"
@@ -19,6 +18,6 @@
   },
   "peerDependencies": {},
   "dependencies": {
-    "@clack/prompts": "^0.7.0"
+
   }
 }
