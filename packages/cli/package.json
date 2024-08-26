@@ -1,0 +1,17 @@
+{
+  "name": "@tinyjobs/cli",
+  "module": "dist/index.js",
+  "type": "module",
+  "devDependencies": {
+    "@tinyjobs/typescript-config": "workspace:*",
+    "@tinyjobs/eslint-config": "workspace:*",
+    "@types/bun": "latest",
+    "eslint": "^9.9.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0"
+  }
+}
