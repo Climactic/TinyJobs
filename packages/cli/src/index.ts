@@ -5,6 +5,7 @@ import introCommand from "./commands/intro";
 import generateCommand from "./commands/generate";
 import versionCommand from "./commands/version";
 import commandContainer from "./utils/commandContainer";
+import initCommand from "./commands/init";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -16,25 +17,32 @@ async function main() {
     command = await select({
       message: "Select a command:",
       options: [
-        { value: "help", label: "Help" },
-        { value: "generate", label: "Generate" },
-        { value: "version", label: "Version" },
+        { value: "generate", label: "tinyjobs generate" },
+        { value: "init", label: "tinyjobs init" },
+        { value: "help", label: "tinyjobs help" },
+        { value: "version", label: "tinyjobs version" },
       ],
     });
   }
+
+  const cmdArgs = args.slice(1);
 
   switch (command) {
     case "help":
     case "h":
     case "-h":
     case "--help":
-      commandContainer(helpCommand, args.slice(1));
+      commandContainer(helpCommand, cmdArgs);
       break;
 
     case "generate":
     case "gen":
     case "g":
-      commandContainer(generateCommand, args.slice(1));
+      commandContainer(generateCommand, cmdArgs);
+      break;
+
+    case "init":
+      commandContainer(initCommand, cmdArgs);
       break;
 
     case "version":

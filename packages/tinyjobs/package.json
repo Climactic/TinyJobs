@@ -1,5 +1,5 @@
 {
-  "name": "@tinyjobs/core",
+  "name": "tinyjobs",
   "version": "0.0.1",
   "private": false,
   "type": "module",
@@ -25,12 +25,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Climactic/tinyjobs",
-    "directory": "packages/core"
+    "directory": "packages/tinyjobs"
   },
   "bugs": {
     "url": "https://github.com/Climactic/tinyjobs/issues"
   },
-  "homepage": "https://github.com/Climactic/tinyjobs/tree/main/packages/core#readme",
+  "homepage": "https://github.com/Climactic/tinyjobs/tree/main/packages/tinyjobs#readme",
   "keywords": [
     "core",
     "background-jobs",
