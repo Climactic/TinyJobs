@@ -6,56 +6,58 @@ import generateCommand from "./commands/generate";
 import versionCommand from "./commands/version";
 import commandContainer from "./utils/commandContainer";
 import initCommand from "./commands/init";
+import configCommand from "./commands/config";
 
-async function main() {
-  const args = process.argv.slice(2);
-  let command: string | symbol = args[0];
+const args = process.argv.slice(2);
+let command: string | symbol = args[0];
 
-  if (!args || !command) {
-    intro(color.bold(color.underline("TinyJobs CLI")));
+if (!args || !command) {
+  intro(color.bold(color.underline("TinyJobs CLI")));
 
-    command = await select({
-      message: "Select a command:",
-      options: [
-        { value: "generate", label: "tinyjobs generate" },
-        { value: "init", label: "tinyjobs init" },
-        { value: "help", label: "tinyjobs help" },
-        { value: "version", label: "tinyjobs version" },
-      ],
-    });
-  }
-
-  const cmdArgs = args.slice(1);
-
-  switch (command) {
-    case "help":
-    case "h":
-    case "-h":
-    case "--help":
-      commandContainer(helpCommand, cmdArgs);
-      break;
-
-    case "generate":
-    case "gen":
-    case "g":
-      commandContainer(generateCommand, cmdArgs);
-      break;
-
-    case "init":
-      commandContainer(initCommand, cmdArgs);
-      break;
-
-    case "version":
-    case "v":
-    case "-v":
-    case "--version":
-      commandContainer(versionCommand);
-      break;
-
-    default:
-      commandContainer(introCommand);
-      break;
-  }
+  command = await select({
+    message: "Select a command:",
+    options: [
+      { value: "generate", label: "tinyjobs generate" },
+      { value: "init", label: "tinyjobs init" },
+      { value: "help", label: "tinyjobs help" },
+      { value: "version", label: "tinyjobs version" },
+    ],
+  });
 }
 
-main();
+const cmdArgs = args.slice(1).map((arg) => arg.toLowerCase());
+
+switch (command ? String(command).toLowerCase() : "") {
+  case "help":
+  case "h":
+  case "-h":
+  case "--help":
+    commandContainer(helpCommand, cmdArgs);
+    break;
+
+  case "config":
+  case "conf":
+    commandContainer(configCommand, cmdArgs, true);
+    break;
+
+  case "generate":
+  case "gen":
+  case "g":
+    commandContainer(generateCommand, cmdArgs);
+    break;
+
+  case "init":
+    commandContainer(initCommand, cmdArgs, true);
+    break;
+
+  case "version":
+  case "v":
+  case "-v":
+  case "--version":
+    commandContainer(versionCommand);
+    break;
+
+  default:
+    commandContainer(introCommand);
+    break;
+}

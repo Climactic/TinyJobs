@@ -48,6 +48,7 @@
   "peerDependencies": {},
   "dependencies": {
     "@clack/prompts": "^0.7.0",
+    "conf": "^13.0.1",
     "picocolors": "^1.0.1"
   }
 }
