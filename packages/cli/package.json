@@ -6,8 +6,36 @@
     "tinyjobs": "dist/index.js"
   },
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "author": {
+    "name": "Aditya Tripathi",
+    "email": "aditya@climactic.co",
+    "url": "https://x.com/AdityaTripathiD"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Climactic/tinyjobs",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/Climactic/tinyjobs/issues"
+  },
+  "homepage": "https://github.com/Climactic/tinyjobs/tree/main/packages/cli#readme",
+  "keywords": [
+    "cli",
+    "background-jobs",
+    "tinyjobs",
+    "nodejs",
+    "bun",
+    "bullmq",
+    "redis"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts"
+    "build": "tsup src/index.ts --format esm --dts",
+    "dev": "bun run build --watch",
+    "prepack": "bun run build"
   },
   "devDependencies": {
     "@tinyjobs/eslint-config": "workspace:*",
@@ -19,6 +47,7 @@
   },
   "peerDependencies": {},
   "dependencies": {
-    "@clack/prompts": "^0.7.0"
+    "@clack/prompts": "^0.7.0",
+    "picocolors": "^1.0.1"
   }
 }

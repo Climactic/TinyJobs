@@ -2,11 +2,47 @@
   "name": "@tinyjobs/core",
   "version": "0.0.1",
   "private": false,
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "type": "module",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "author": {
+    "name": "Aditya Tripathi",
+    "email": "aditya@climactic.co",
+    "url": "https://x.com/AdityaTripathiD"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Climactic/tinyjobs",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/Climactic/tinyjobs/issues"
+  },
+  "homepage": "https://github.com/Climactic/tinyjobs/tree/main/packages/core#readme",
+  "keywords": [
+    "core",
+    "background-jobs",
+    "tinyjobs",
+    "nodejs",
+    "bun",
+    "bullmq",
+    "redis"
+  ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts"
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "prepack": "bun run build"
   },
   "devDependencies": {
     "@tinyjobs/eslint-config": "workspace:*",
