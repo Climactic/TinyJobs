@@ -81,8 +81,8 @@ async function configCommand(args: string[]) {
           )}.`
         );
       } catch (e) {
-        // @ts-expect-error
-        log.error(e.message);
+        log.error((e as Error).message);
+        process.exit(1);
       }
       break;
 

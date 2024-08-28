@@ -8,10 +8,16 @@ import {
 
 async function initCommand(args: string[]) {
   // Confirm initialization
-  log.info("This is the init command.");
+  log.info(
+    [
+      `This will create the following files:`,
+      `- ExampleJob.ts or ExampleJob.js`,
+      `- tinyjobs.config.json`,
+    ].join("\n")
+  );
+
   const confirm = await select({
-    message:
-      "Would you like to initialize TinyJobs in this project? This will create a tinyjobs.json file and an example job.",
+    message: "Would you like to initialize TinyJobs in this project?",
     options: [
       { value: true, label: "Yes" },
       { value: false, label: "No" },

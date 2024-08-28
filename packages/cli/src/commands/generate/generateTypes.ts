@@ -53,6 +53,13 @@ function extractJobTypes(filePath: string): JobTypeDefinition | null {
 }
 
 function generateJobTypes() {
+  // Skip if the command is not run from the root of the project
+  if (config.get("language") !== "typescript") {
+    return log.error(
+      "Types generation is only supported in TypeScript projects."
+    );
+  }
+
   // Get the jobs directory from the config
   const jobsDir = config.get("jobsDir") as string;
   if (jobsDir === undefined) {

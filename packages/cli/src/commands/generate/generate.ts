@@ -1,6 +1,6 @@
 import { log, select } from "@clack/prompts";
-import generateJob from "./generate/generateJob";
-import generateJobTypes from "./generate/generateTypes";
+import generateJob from "./generateJob";
+import generateJobTypes from "./generateTypes";
 
 async function generateCommand(args: string[]) {
   let option: string | symbol = args[0];
