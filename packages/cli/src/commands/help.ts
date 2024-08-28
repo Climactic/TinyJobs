@@ -43,15 +43,16 @@ async function helpCommand(args: string[]) {
   } else {
     log.info("Welcome to the TinyJobs CLI!");
 
-    log.info(
-      `To get started, run ${color.bold("tinyjobs init")} to set up your project.`
-    );
+    log.info("Available help commands:");
 
     log.info(
-      `To generate a new job, run ${color.bold("tinyjobs generate")} and follow the prompts.`
+      [
+        color.bold("tinyjobs help generate"),
+        color.bold("tinyjobs help config"),
+        color.bold("tinyjobs help init"),
+        color.bold("tinyjobs help version"),
+      ].join("\n")
     );
-
-    log.info(`To configure TinyJobs, run ${color.bold("tinyjobs config")} `);
   }
 }
 

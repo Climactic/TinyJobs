@@ -33,7 +33,7 @@
     "redis"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts",
+    "build": "tsup src/index.ts --format esm --minify",
     "dev": "bun run build --watch",
     "prepack": "bun run build"
   },
@@ -42,13 +42,13 @@
     "@tinyjobs/typescript-config": "workspace:*",
     "@types/bun": "latest",
     "eslint": "^9.9.1",
-    "tsup": "^8.2.4",
-    "typescript": "^5.0.0"
+    "tsup": "^8.2.4"
   },
   "peerDependencies": {},
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "conf": "^13.0.1",
-    "picocolors": "^1.0.1"
+    "picocolors": "^1.0.1",
+    "typescript": "^5.5.4"
   }
 }

@@ -1,7 +1,10 @@
 import { log, select, text } from "@clack/prompts";
 import fs from "fs";
 import config from "../utils/config";
-import { javascriptJobExample, typescriptJobExample } from "../base/exampleJobs";
+import {
+  javascriptJobExample,
+  typescriptJobExample,
+} from "../base/exampleJobs";
 
 async function initCommand(args: string[]) {
   // Confirm initialization
@@ -15,7 +18,7 @@ async function initCommand(args: string[]) {
     ],
   });
 
-  if (!confirm) {
+  if (!confirm || typeof confirm === "symbol") {
     log.info("Cancelled TinyJobs initialization. Exiting...");
     process.exit(0);
   }
@@ -35,7 +38,17 @@ async function initCommand(args: string[]) {
     ],
   });
 
-  config.set("language", type);
+  if (!type || typeof type === "symbol") {
+    process.exit(0);
+  }
+
+  try {
+    config.set("language", type);
+  } catch (e) {
+    // @ts-expect-error
+    log.error(e.message);
+    process.exit(1);
+  }
 
   // Selecting the directory to store jobs and types
   const jobsDir = await select({
@@ -51,6 +64,10 @@ async function initCommand(args: string[]) {
       },
     ],
   });
+
+  if (!jobsDir || typeof jobsDir === "symbol") {
+    process.exit(0);
+  }
 
   let customDir: string | symbol = "";
 

@@ -6,8 +6,8 @@ export default class ExampleJob extends Job {
     this.name = 'ExampleJob';
   }
 
-  async run() {
-    console.log('Hello from ExampleJob!');
+  async run({ name }: { name: string }) {
+    console.log(\`Hello from ExampleJob \${name}!\`);
   }
 }
 `;
@@ -20,8 +20,8 @@ module.exports = class ExampleJob extends Job {
     this.name = 'ExampleJob';
   }
 
-  async run() {
-    console.log('Hello from ExampleJob!');
+  async run({ name }) {
+    console.log(\`Hello from ExampleJob \${name}!\`);
   }
 };
 `;
