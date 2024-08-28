@@ -1,14 +1,5 @@
 {
   "name": "tinyjobs",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "ci:version": "bunx changeset version && bun install",
-    "ci:publish": "bunx changeset publish"
-  },
   "devDependencies": {
     "prettier": "^3.3.3",
     "turbo": "^2.0.14",
@@ -19,6 +10,15 @@
     "node": ">=18"
   },
   "packageManager": "bun@1.1.26",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "ci:version": "bunx changeset version && bun install",
+    "ci:publish": "bunx changeset publish"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"

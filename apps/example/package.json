@@ -1,0 +1,17 @@
+{
+  "name": "@tinyjobs/example",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun src/index.ts --watch"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "tinyjobs": "*"
+  }
+}

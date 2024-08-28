@@ -42,6 +42,7 @@
   ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "bun run build --watch",
     "prepack": "bun run build"
   },
   "devDependencies": {
@@ -54,6 +55,6 @@
   },
   "peerDependencies": {},
   "dependencies": {
-
+    "bullmq": "^5.12.11"
   }
 }
