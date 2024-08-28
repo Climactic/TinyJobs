@@ -3,10 +3,14 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun src/index.ts --watch"
+    "dev": "bun src/index.ts --watch",
+    "lint": "eslint"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "eslint": "8.56.0",
+    "@tinyjobs/eslint-config": "workspace:*",
+    "@tinyjobs/typescript-config": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

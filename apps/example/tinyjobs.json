@@ -1,4 +1,8 @@
 {
-	"language": "typescript",
-	"jobsDir": "src/jobs"
-}
+	"extends": "@tinyjobs/typescript-config/default.json",
+	"compilerOptions": {
+	  "outDir": "dist"
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "dist"]
+  }

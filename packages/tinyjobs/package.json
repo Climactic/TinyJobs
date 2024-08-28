@@ -43,13 +43,14 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "bun run build --watch",
-    "prepack": "bun run build"
+    "prepack": "bun run build",
+    "lint": "eslint"
   },
   "devDependencies": {
     "@tinyjobs/eslint-config": "workspace:*",
     "@tinyjobs/typescript-config": "workspace:*",
     "@types/bun": "latest",
-    "eslint": "^9.9.1",
+    "eslint": "8.56.0",
     "tsup": "^8.2.4",
     "typescript": "^5.0.0"
   },
