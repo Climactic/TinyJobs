@@ -1,0 +1,11 @@
+{
+    "extends": "@tinyjobs/typescript-config/default.json",
+    "compilerOptions": {
+      "outDir": "dist",
+      "paths": {
+        "tinyjobs": ["../../packages/tinyjobs/src/index.ts"]
+      }
+    },
+    "include": ["src", "turbo"],
+    "exclude": ["node_modules", "dist"]
+  }
