@@ -2,8 +2,9 @@ const typescriptJobExample = `import { Job } from "tinyjobs";
 
 export default class ExampleJob extends Job {
   constructor() {
-    super();
-    this.name = 'ExampleJob';
+    super({
+      name: 'exampleJob',
+    });
   }
 
   async run({ name }: { name: string }) {
@@ -16,8 +17,9 @@ const javascriptJobExample = `const { Job } = require("tinyjobs");
 
 module.exports = class ExampleJob extends Job {
   constructor() {
-    super();
-    this.name = 'ExampleJob';
+    super({
+      name: 'exampleJob',
+    });
   }
 
   async run({ name }) {

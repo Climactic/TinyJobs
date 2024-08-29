@@ -40,7 +40,7 @@ const generateJob = async (args: string[]) => {
     `${process.cwd()}/${config.get("jobsDir")}/${pascalCase(String(jobName)).replace(/.ts|.js/gi, "")}.${
       language === "typescript" ? "ts" : "js"
     }`,
-    jobTemplate.replace(/ExampleJob/g, pascalCase(String(jobName)))
+    jobTemplate.replace(/ExampleJob|exampleJob/g, pascalCase(String(jobName)))
   );
 
   log.success("Job generated successfully.");

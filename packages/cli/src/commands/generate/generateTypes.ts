@@ -24,6 +24,29 @@ function extractJobTypes(filePath: string): JobTypeDefinition | null {
     if (ts.isClassDeclaration(node)) {
       node.members.forEach((member) => {
         if (ts.isConstructorDeclaration(member)) {
+          const superCall = member.body?.statements.find(
+            (stmt) =>
+              ts.isExpressionStatement(stmt) &&
+              ts.isCallExpression(stmt.expression) &&
+              stmt.expression.expression.getText() === "super"
+          ) as ts.ExpressionStatement | undefined;
+
+          if (superCall && ts.isCallExpression(superCall.expression)) {
+            const nameArg = superCall.expression.arguments[0];
+            if (ts.isObjectLiteralExpression(nameArg)) {
+              const nameProp = nameArg.properties.find(
+                (prop) =>
+                  ts.isPropertyAssignment(prop) &&
+                  prop.name.getText() === "name" &&
+                  ts.isStringLiteral(prop.initializer)
+              ) as ts.PropertyAssignment | undefined;
+
+              if (nameProp && ts.isStringLiteral(nameProp.initializer)) {
+                jobName = nameProp.initializer.text;
+              }
+            }
+          }
+
           member.body?.statements.forEach((statement) => {
             if (
               ts.isExpressionStatement(statement) &&
@@ -109,8 +132,7 @@ function generateJobTypes() {
     .map(({ jobName }) => `'${jobName}': ${jobName}Params`)
     .join(";\n  ");
 
-  const fileContent = `
-${typeDefinitions}
+  const fileContent = `${typeDefinitions}
 
 type TinyJobsTypes = {
   ${allJobsType}

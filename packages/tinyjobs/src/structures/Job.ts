@@ -1,26 +1,45 @@
 /**
- * @description The base class for all jobs
+ * Base Job for creating jobs.
+ * @class Job
  * @abstract
- * @class
- * @name TinyJob
  * @example
- * class MyJob extends TinyJob {
+ * ```ts
+ * import { Job } from "tinyjobs";
+ *
+ * export default class ExampleJob extends Job {
  *  constructor() {
- *   super();
- *   this.name = "MyJob";
- *   this.cron = "* * * * *";
+ *   super({
+ *    name: "exampleJob",
+ *   });
  *  }
  *
- *  run({ name }: { name: string }) {
- *    console.log(`Hello, ${name}!`);
+ *  async run({ name }: { name: string }) {
+ *   console.log(`Hello from ${this.name} ${name}!`);
  *  }
  * }
- **/
-abstract class Job {
-  name!: string;
+ * ```
+ */
+
+class Job {
+  name: string;
   cron?: string;
 
-  abstract run(payload: Record<string, any>): void;
+  constructor(options: { name: string; cron?: string }) {
+    this.name = options.name;
+    this.cron = options.cron;
+  }
+
+  async run(payload?: Record<string, unknown>) {
+    throw new Error("Method not implemented.");
+  }
+
+  static get name(): string {
+    return this.name;
+  }
+
+  static get cron(): string | undefined {
+    return this.cron;
+  }
 }
 
 export default Job;
