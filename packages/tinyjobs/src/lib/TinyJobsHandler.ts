@@ -13,10 +13,18 @@ type TinyJobsConstructorTypes = {
   queueName?: string;
 };
 
+type JobsMap = Map<
+  string,
+  {
+    implementation: new () => TinyJob;
+    cron?: string;
+  }
+>;
+
 class TinyJobs<T> {
   private queue: Queue;
   private worker: Worker;
-  private jobs = new Map<string, new () => TinyJob>();
+  private jobs: JobsMap = new Map();
 
   constructor(tinyJobsParams?: TinyJobsConstructorTypes) {
     const {
@@ -35,28 +43,35 @@ class TinyJobs<T> {
   }
 
   private async processQueue(job: BullJob) {
-    const JobClass = this.jobs.get(job.name);
-    if (!JobClass)
+    const jobClass = this.jobs.get(job.name)?.implementation;
+    if (!jobClass)
       throw new Error(`No handler registered for job type: ${job.name}`);
 
-    if (JobClass.prototype instanceof TinyJob) {
-      const jobInstance = new (JobClass as any)();
-      await jobInstance.handle(job.data);
+    if (jobClass.prototype instanceof TinyJob) {
+      const jobInstance = new jobClass();
+      await Promise.resolve(jobInstance.run(job.data));
     } else {
       throw new Error("Invalid job type.");
     }
   }
 
-  public async queueJob<K extends keyof T>(
-    jobName: K,
-    data: T[K],
-    options?: JobsOptions
-  ) {
-    return this.queue.add(jobName as string, data, options ? options : {});
-  }
+  public async registerJob(job: new () => TinyJob) {
+    if (this.jobs.has(job.name)) {
+      throw new Error(`Job with name ${job.name} already registered.`);
+    }
+    const implementation = new job();
+    this.jobs.set(job.name, {
+      implementation: job,
+      cron: implementation.cron,
+    });
 
-  public registerJob(job: new () => TinyJob) {
-    this.jobs.set(job.name, job);
+    if (implementation.cron) {
+      await this.queue.add(implementation.name, undefined, {
+        repeat: {
+          pattern: implementation.cron,
+        },
+      });
+    }
   }
 
   public async loadJobs(dir?: string) {
@@ -74,11 +89,29 @@ class TinyJobs<T> {
     const jobs = await loadJobsFromDir(jobsDir);
     for (const job of jobs) {
       if (typeof job === "function") {
-        this.registerJob(job);
+        await this.registerJob(job);
       } else {
         throw new Error(`Invalid job type: ${typeof job}`);
       }
     }
+  }
+
+  public async queueJob<K extends keyof T>(
+    jobName: K,
+    data?: T[K],
+    options?: JobsOptions
+  ) {
+    const job = this.jobs.get(jobName as string);
+    const cron = job?.cron;
+
+    return this.queue.add(jobName as string, data, {
+      repeat: cron
+        ? {
+            pattern: cron,
+          }
+        : undefined,
+      ...options,
+    });
   }
 }
 

@@ -1,8 +1,9 @@
-
-interface ExampleJobParams { name: string };
+interface cronExampleParams { name: string };
+interface exampleJobParams { name: string };
 
 type TinyJobsTypes = {
-  'ExampleJob': ExampleJobParams
+  'cronExample': cronExampleParams;
+  'exampleJob': exampleJobParams
 };
 
 export default TinyJobsTypes;
