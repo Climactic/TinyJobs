@@ -1,14 +1,15 @@
+import { sleep } from "bun";
 import { Job } from "tinyjobs";
 
 export default class DelayedJob extends Job {
   constructor() {
     super({
-      name: "DelayedJob",
-      delay: 5000,
+      name: "delayedJob",
+      delay: 5000, // 5 seconds
     });
   }
 
   async run({ name }: { name: string }) {
-    console.log(`Hello from DelayedJob ${name}!`);
+    console.log(`Hello from ${this.name} ${name}!`);
   }
 }

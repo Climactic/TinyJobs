@@ -3,7 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun src/index.ts --watch",
+    "dev": "bun --watch src/index.ts",
     "lint": "eslint"
   },
   "devDependencies": {

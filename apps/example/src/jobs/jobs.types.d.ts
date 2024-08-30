@@ -1,10 +1,10 @@
 interface cronExampleParams { name: string };
-interface DelayedJobParams { name: string };
+interface delayedJobParams { name: string };
 interface exampleJobParams { name: string };
 
 type TinyJobsTypes = {
   'cronExample': cronExampleParams;
-  'DelayedJob': DelayedJobParams;
+  'delayedJob': delayedJobParams;
   'exampleJob': exampleJobParams
 };
 

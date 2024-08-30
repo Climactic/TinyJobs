@@ -17,7 +17,7 @@ type TinyJobsConstructorTypes = {
 type JobsMap = Map<
   string,
   {
-    implementation: new () => TinyJob;
+    implementation: TinyJob;
     cron?: string;
     delay?: number;
   }
@@ -25,8 +25,13 @@ type JobsMap = Map<
 
 class TinyJobs<T> {
   private queue: Queue;
-  private jobs: JobsMap = new Map();
+  public jobs: JobsMap = new Map();
   private worker: Worker;
+
+  private options = {
+    removeOnComplete: false,
+    removeOnFailure: false,
+  };
 
   private readonly removeOnComplete = true;
   private readonly removeOnFailure = true;
@@ -66,9 +71,8 @@ class TinyJobs<T> {
     if (!jobClass)
       throw new Error(`No handler registered for job type: ${job.name}`);
 
-    if (jobClass.prototype instanceof TinyJob) {
-      const jobInstance = new jobClass();
-      await Promise.resolve(jobInstance.run(job.data));
+    if (jobClass instanceof TinyJob) {
+      await Promise.resolve(jobClass.run(job.data));
     } else {
       throw new Error("Invalid job type.");
     }
@@ -79,10 +83,12 @@ class TinyJobs<T> {
       throw new Error(`Job with name ${job.name} already registered.`);
 
     const implementation = new job();
-    this.jobs.set(job.name, {
-      implementation: job,
-      cron: implementation.cron,
-      delay: implementation.delay,
+    const { name, cron, delay } = implementation;
+
+    this.jobs.set(name, {
+      implementation: implementation,
+      cron,
+      delay,
     });
 
     // Queue the job if it has a cron pattern so user doesn't have to do it manually
