@@ -11,6 +11,7 @@ type TinyJobsConstructorTypes = {
   connection?: ConnectionOptions;
   queueOptions?: JobsOptions;
   queueName?: string;
+  concurrency?: number;
 };
 
 type JobsMap = Map<
@@ -18,28 +19,46 @@ type JobsMap = Map<
   {
     implementation: new () => TinyJob;
     cron?: string;
+    delay?: number;
   }
 >;
 
 class TinyJobs<T> {
   private queue: Queue;
-  private worker: Worker;
   private jobs: JobsMap = new Map();
+  private worker: Worker;
 
+  private readonly removeOnComplete = true;
+  private readonly removeOnFailure = true;
+
+  /**
+   * Creates an instance of TinyJobs.
+   * @param {ConnectionOptions} [connection] The connection options for the queue.
+   * @param {JobsOptions} [queueOptions] The options for the queue.
+   * @param {string} [queueName] The name of the queue.
+   * @param {number} [concurrency] The number of jobs to process concurrently.
+   * @memberof TinyJobs
+   */
   constructor(tinyJobsParams?: TinyJobsConstructorTypes) {
     const {
       connection,
       queueOptions,
       queueName = `tjq-${generateRandomUid()}`,
+      concurrency,
     } = tinyJobsParams ?? {};
 
     this.queue = new Queue(queueName, {
       connection: connection ?? {},
+      ...queueOptions,
     });
 
     this.worker = new Worker(queueName, this.processQueue.bind(this), {
       connection: connection ?? {},
+      concurrency: concurrency ?? 1,
     });
+
+    process.on("SIGINT", () => this.gracefulShutdown("SIGINT"));
+    process.on("SIGTERM", () => this.gracefulShutdown("SIGTERM"));
   }
 
   private async processQueue(job: BullJob) {
@@ -56,20 +75,25 @@ class TinyJobs<T> {
   }
 
   public async registerJob(job: new () => TinyJob) {
-    if (this.jobs.has(job.name)) {
+    if (this.jobs.has(job.name))
       throw new Error(`Job with name ${job.name} already registered.`);
-    }
+
     const implementation = new job();
     this.jobs.set(job.name, {
       implementation: job,
       cron: implementation.cron,
+      delay: implementation.delay,
     });
 
+    // Queue the job if it has a cron pattern so user doesn't have to do it manually
     if (implementation.cron) {
       await this.queue.add(implementation.name, undefined, {
         repeat: {
           pattern: implementation.cron,
         },
+        removeOnComplete: this.removeOnComplete,
+        removeOnFail: this.removeOnFailure,
+        delay: implementation.delay,
       });
     }
   }
@@ -102,7 +126,7 @@ class TinyJobs<T> {
     options?: JobsOptions
   ) {
     const job = this.jobs.get(jobName as string);
-    const cron = job?.cron;
+    const { cron, delay } = job ?? {};
 
     return this.queue.add(jobName as string, data, {
       repeat: cron
@@ -110,8 +134,16 @@ class TinyJobs<T> {
             pattern: cron,
           }
         : undefined,
+      delay: delay ?? undefined,
+      removeOnComplete: this.removeOnComplete,
+      removeOnFail: this.removeOnFailure,
       ...options,
     });
+  }
+
+  private async gracefulShutdown(signal: NodeJS.Signals) {
+    await this.worker.close();
+    process.exit(signal === "SIGTERM" ? 0 : 1);
   }
 }
 

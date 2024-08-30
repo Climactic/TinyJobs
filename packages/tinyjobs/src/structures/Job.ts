@@ -23,10 +23,19 @@
 class Job {
   name: string;
   cron?: string;
+  delay?: number;
 
-  constructor(options: { name: string; cron?: string }) {
+  /**
+   * Creates an instance of Job.
+   * @param {string} name The name of the job.
+   * @param {string} [cron] The cron pattern for the job.
+   * @param {number} [delay] The delay in milliseconds for the job.
+   * @memberof Job
+   */
+  constructor(options: { name: string; cron?: string; delay?: number }) {
     this.name = options.name;
     this.cron = options.cron;
+    this.delay = options.delay;
   }
 
   async run(payload?: Record<string, unknown>) {
@@ -39,6 +48,23 @@ class Job {
 
   static get cron(): string | undefined {
     return this.cron;
+  }
+
+  static get delay(): number | undefined {
+    return this.delay;
+  }
+
+  static get concurrency(): number | undefined {
+    return this.concurrency;
+  }
+
+  static toJSON() {
+    return {
+      name: this.name,
+      cron: this.cron,
+      delay: this.delay,
+      concurrency: this.concurrency,
+    };
   }
 }
 

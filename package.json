@@ -14,6 +14,8 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:packages": "turbo dev --filter=./packages/*",
+    "dev:apps": "turbo dev --filter=./apps/*",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "ci:version": "bunx changeset version && bun install",
