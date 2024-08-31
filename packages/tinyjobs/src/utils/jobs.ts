@@ -11,13 +11,12 @@ export const loadJobsFromDir = async (dir: string) => {
         !file.endsWith(".d.ts")
     );
 
-  const jobs: TinyJob[] = [];
+  const jobs = new Map<string, TinyJob>();
 
   for (const file of files) {
     const JobClass = require(path.join(dir, file)).default;
-    if (JobClass.prototype instanceof TinyJob) {
-      jobs.push(JobClass);
-    }
+    if (JobClass.prototype instanceof TinyJob)
+      jobs.set(`${dir}/${file}`, JobClass);
   }
 
   return jobs;

@@ -29,16 +29,21 @@ type JobsMap = Map<
 
 class TinyJobs<T> {
   private queue: Queue;
-  private worker: Worker;
+  // private worker: Worker;
   private redis: IORedis.Redis;
+  private workers: Map<string, Worker> = new Map();
 
-  private options = {
+  private options: {
+    removeOnComplete: boolean;
+    removeOnFailure: boolean;
+    concurrency: number;
+    connection?: ConnectionOptions;
+  } = {
     removeOnComplete: false,
     removeOnFailure: false,
+    concurrency: 1,
+    connection: {},
   };
-
-  private readonly removeOnComplete = true;
-  private readonly removeOnFailure = true;
 
   public jobs: JobsMap = new Map();
   public events: TinyJobEventsHandler;
@@ -52,14 +57,15 @@ class TinyJobs<T> {
       concurrency,
     } = tinyJobsParams ?? {};
 
+    this.options = {
+      ...this.options,
+      connection: bullConnection,
+      concurrency: concurrency ?? 1,
+    };
+
     this.queue = new Queue(queueName, {
       connection: bullConnection ?? {},
       ...queueOptions,
-    });
-
-    this.worker = new Worker(queueName, this.processQueue.bind(this), {
-      connection: bullConnection ?? {},
-      concurrency: concurrency ?? 1,
     });
 
     this.redis = new IORedis.Redis(redisConnection ?? {});
@@ -74,19 +80,28 @@ class TinyJobs<T> {
     if (!jobClass)
       throw new Error(`No handler registered for job type: ${job.name}`);
 
-    if (jobClass instanceof TinyJob) {
+    if (jobClass instanceof TinyJob)
       await Promise.resolve(jobClass.run(job.data));
-    } else {
-      throw new Error("Invalid job type.");
-    }
+    else throw new Error("Invalid job type.");
   }
 
-  public async registerJob(job: new () => TinyJob) {
+  public async registerJob(job: new () => TinyJob, path?: string) {
     if (this.jobs.has(job.name))
       throw new Error(`Job with name ${job.name} already registered.`);
 
     const implementation = new job();
-    const { name, cron, delay } = implementation;
+    const { name, cron, delay, conccurency } = implementation;
+
+    const jobWorker = new Worker(
+      this.queue.name,
+      this.processQueue.bind(this),
+      {
+        concurrency: conccurency ?? this.options.concurrency,
+        connection: this.options.connection ?? {},
+      }
+    );
+
+    this.workers.set(name, jobWorker);
 
     this.jobs.set(name, {
       implementation: implementation,
@@ -100,8 +115,8 @@ class TinyJobs<T> {
         repeat: {
           pattern: implementation.cron,
         },
-        removeOnComplete: this.removeOnComplete,
-        removeOnFail: this.removeOnFailure,
+        removeOnComplete: this.options.removeOnComplete,
+        removeOnFail: this.options.removeOnFailure,
         delay: implementation.delay,
       });
     }
@@ -120,9 +135,9 @@ class TinyJobs<T> {
       );
 
     const jobs = await loadJobsFromDir(jobsDir);
-    for (const job of jobs) {
+    for (const [jobName, job] of jobs) {
       if (typeof job === "function") {
-        await this.registerJob(job);
+        await this.registerJob(job, jobName);
       } else {
         throw new Error(`Invalid job type: ${typeof job}`);
       }
@@ -144,8 +159,8 @@ class TinyJobs<T> {
           }
         : undefined,
       delay: delay ?? undefined,
-      removeOnComplete: this.removeOnComplete,
-      removeOnFail: this.removeOnFailure,
+      removeOnComplete: this.options.removeOnComplete,
+      removeOnFail: this.options.removeOnFailure,
       ...options,
     });
 
@@ -160,8 +175,11 @@ class TinyJobs<T> {
   }
 
   private async gracefulShutdown(signal: NodeJS.Signals) {
-    await this.worker.close();
+    for (const worker of this.workers.values()) await worker.close();
+
+    // await this.worker.close();
     await this.redis.quit();
+
     process.exit(signal === "SIGTERM" ? 0 : 1);
   }
 }

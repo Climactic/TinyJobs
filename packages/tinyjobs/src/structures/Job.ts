@@ -24,18 +24,26 @@ class Job {
   name: string;
   cron?: string;
   delay?: number;
+  conccurency?: number;
 
   /**
    * Creates an instance of Job.
    * @param {string} name The name of the job.
    * @param {string} [cron] The cron pattern for the job.
    * @param {number} [delay] The delay in milliseconds for the job.
+   * @param {number} [concurrency] The concurrency for the job. Defaults to global concurrency of TinyJobs.
    * @memberof Job
    */
-  constructor(options: { name: string; cron?: string; delay?: number }) {
+  constructor(options: {
+    name: string;
+    cron?: string;
+    delay?: number;
+    concurrency?: number;
+  }) {
     this.name = options.name;
     this.cron = options.cron;
     this.delay = options.delay;
+    this.conccurency = options.concurrency;
   }
 
   async run(payload?: Record<string, unknown>) {
