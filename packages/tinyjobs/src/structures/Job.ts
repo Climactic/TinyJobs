@@ -46,7 +46,7 @@ class Job {
     this.conccurency = options.concurrency;
   }
 
-  async run(payload?: Record<string, unknown>) {
+  async run(payload?: Record<string, unknown>): Promise<any> {
     throw new Error("Method not implemented.");
   }
 

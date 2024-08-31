@@ -8,13 +8,15 @@ import type TinyJobsTypes from "./jobs/jobs.types";
 const tinyJobs = new TinyJobs<TinyJobsTypes>({
   queueName: "tinyjobs-example",
   concurrency: 5, // Process 5 jobs concurrently
+  removeOnComplete: true,
+  removeOnFailure: true,
 });
 
 await tinyJobs.loadJobs();
 
 // Run Jobs which are not scheduled via cron
-tinyJobs.queueJob("exampleJob", { name: "exampleJob" });
-tinyJobs.queueJob("delayedJob", { name: "DelayedJob" });
+tinyJobs.invoke("exampleJob", { name: "exampleJob" });
+tinyJobs.invoke("delayedJob", { name: "DelayedJob" });
 
 // Logging
 tinyJobs.events.on(TinyJobEvents.JOB_COMPLETE, (job) => {

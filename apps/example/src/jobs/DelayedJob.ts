@@ -11,5 +11,6 @@ export default class DelayedJob extends Job {
 
   async run({ name }: { name: string }) {
     console.log(`Hello from ${this.name} ${name}!`);
+    return { name };
   }
 }

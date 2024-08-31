@@ -4,6 +4,7 @@ import IORedis from "ioredis";
 
 import { TinyJobEvents } from "../types";
 import type { JobCompletedData, JobFailedData } from "./types/eventsData";
+import { getJobNameRedisKey } from "../utils/utils";
 
 type TinyJobEventsConstructorTypes = {
   queueName: string;
@@ -22,15 +23,14 @@ class TinyJobEventsHandler extends EventEmitter {
     this.init();
   }
 
-  init() {
+  private init() {
     this.events.on("completed", async ({ jobId, returnvalue, prev }) => {
       const jobName = await this.getJobNameById(jobId);
       if (jobName) {
         const jobData = {
           jobId,
           jobName,
-          returnvalue,
-          prev,
+          returnValue: returnvalue,
         };
         this.emit(TinyJobEvents.JOB_COMPLETE, jobData);
       }
@@ -59,8 +59,8 @@ class TinyJobEventsHandler extends EventEmitter {
    *
    * @param jobId - The job id from the queue
    */
-  private async getJobNameById(jobId: string): Promise<string | null> {
-    const keys = await this.redis.keys("tinyjobs:tje:job:*");
+  public async getJobNameById(jobId: string): Promise<string | null> {
+    const keys = await this.redis.keys(getJobNameRedisKey("*"));
 
     for (const key of keys) {
       const jobName = await this.redis.hget(key, jobId);

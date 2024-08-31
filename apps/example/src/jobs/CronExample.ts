@@ -10,5 +10,6 @@ export default class CronExample extends Job {
 
   async run({ name }: { name: string }) {
     console.log(`Hello from cronExample ${name}!`);
+    return { name };
   }
 }

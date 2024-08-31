@@ -1,8 +1,7 @@
 export type JobCompletedData = {
   jobId: string;
   jobName: string;
-  returnvalue: any;
-  prev?: string;
+  returnValue: any;
 };
 
 export type JobFailedData = {
