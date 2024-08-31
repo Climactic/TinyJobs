@@ -57,6 +57,7 @@
   "peerDependencies": {},
   "dependencies": {
     "bullmq": "^5.12.11",
+    "ioredis": "^5.4.1",
     "valibot": "^0.39.0"
   }
 }

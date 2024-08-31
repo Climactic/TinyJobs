@@ -4,7 +4,7 @@ export default class CronExample extends Job {
   constructor() {
     super({
       name: "cronExample",
-      cron: "*/1 * * * *",
+      cron: "*/1 * * * *", // Every minute
     });
   }
 

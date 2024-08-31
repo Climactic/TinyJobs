@@ -1,14 +1,18 @@
 import { Queue, Worker, Job as BullJob } from "bullmq";
 import type { JobsOptions, ConnectionOptions } from "bullmq";
+import * as IORedis from "ioredis";
 import path from "path";
 
 import TinyJob from "../structures/Job";
+import TinyJobEventsHandler from "./TinyJobsEventsHandler";
+
 import { generateRandomUid } from "../utils/utils";
 import { getConfig } from "../utils/config";
 import { loadJobsFromDir } from "../utils/jobs";
 
 type TinyJobsConstructorTypes = {
-  connection?: ConnectionOptions;
+  bullConnection?: ConnectionOptions;
+  redisConnection?: IORedis.RedisOptions;
   queueOptions?: JobsOptions;
   queueName?: string;
   concurrency?: number;
@@ -25,8 +29,8 @@ type JobsMap = Map<
 
 class TinyJobs<T> {
   private queue: Queue;
-  public jobs: JobsMap = new Map();
   private worker: Worker;
+  private redis: IORedis.Redis;
 
   private options = {
     removeOnComplete: false,
@@ -36,31 +40,30 @@ class TinyJobs<T> {
   private readonly removeOnComplete = true;
   private readonly removeOnFailure = true;
 
-  /**
-   * Creates an instance of TinyJobs.
-   * @param {ConnectionOptions} [connection] The connection options for the queue.
-   * @param {JobsOptions} [queueOptions] The options for the queue.
-   * @param {string} [queueName] The name of the queue.
-   * @param {number} [concurrency] The number of jobs to process concurrently.
-   * @memberof TinyJobs
-   */
+  public jobs: JobsMap = new Map();
+  public events: TinyJobEventsHandler;
+
   constructor(tinyJobsParams?: TinyJobsConstructorTypes) {
     const {
-      connection,
+      bullConnection,
+      redisConnection,
       queueOptions,
       queueName = `tjq-${generateRandomUid()}`,
       concurrency,
     } = tinyJobsParams ?? {};
 
     this.queue = new Queue(queueName, {
-      connection: connection ?? {},
+      connection: bullConnection ?? {},
       ...queueOptions,
     });
 
     this.worker = new Worker(queueName, this.processQueue.bind(this), {
-      connection: connection ?? {},
+      connection: bullConnection ?? {},
       concurrency: concurrency ?? 1,
     });
+
+    this.redis = new IORedis.Redis(redisConnection ?? {});
+    this.events = new TinyJobEventsHandler({ queueName, redis: this.redis });
 
     process.on("SIGINT", () => this.gracefulShutdown("SIGINT"));
     process.on("SIGTERM", () => this.gracefulShutdown("SIGTERM"));
@@ -134,7 +137,7 @@ class TinyJobs<T> {
     const job = this.jobs.get(jobName as string);
     const { cron, delay } = job ?? {};
 
-    return this.queue.add(jobName as string, data, {
+    const queuedJob = await this.queue.add(jobName as string, data, {
       repeat: cron
         ? {
             pattern: cron,
@@ -145,10 +148,20 @@ class TinyJobs<T> {
       removeOnFail: this.removeOnFailure,
       ...options,
     });
+
+    // Add job ID to the Redis hash for the job name
+    await this.redis.hset(
+      `tinyjobs:tje:job:${jobName as string}`,
+      queuedJob.id as string,
+      jobName as string
+    );
+
+    return queuedJob;
   }
 
   private async gracefulShutdown(signal: NodeJS.Signals) {
     await this.worker.close();
+    await this.redis.quit();
     process.exit(signal === "SIGTERM" ? 0 : 1);
   }
 }
