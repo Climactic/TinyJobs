@@ -1,23 +1,18 @@
 # TinyJobs
 
-Background jobs made easy.
-
-## CLI
-
-Run the following command:
-
-```sh
-bunx @tinyjobs/cli
-```
+TinyJobs is tiny user-friendly background jobs framework for JavaScript runtimes.
 
 ## What's inside?
 
-This Turborepo includes the following packages/apps:
+This repo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `tinyjobs`: TinyJobs core package that provides the framework for creating and running background jobs.
+- `@tinyjobs/cli`: CLI for managing TinyJobs in your project.
+- `@tinyjobs/example`: Example app that demonstrates how to use TinyJobs.
+- `@tinyjobs/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@tinyjobs/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 ### Utilities
 
@@ -27,13 +22,48 @@ This Turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
-### Build
 
-To build all apps and packages, run the following command:
+## CLI
 
+Run the following command:
+
+```sh
+bunx @tinyjobs/cli
 ```
-cd my-turborepo
-pnpm build
+
+## Usage
+Instantiate a new `TinyJobs` instance and add the job:
+
+```ts
+import TinyJobs from 'tinyjobs';
+
+const tinyJobs = new TinyJobs();
+
+// Load jobs from the jobs directory
+await tinyJobs.loadJobs();
+
+// Invoke the job to run in the background
+await tinyJobs.invoke('exampleJob', { name: 'world' });
+```
+
+## Creating a Job
+
+### Your First Job
+Let's create a new job in the `jobs` directory:
+```ts
+import { Job } from 'tinyjobs';
+
+export default class FirstJob extends Job {
+  constructor() {
+    super({
+        name: "firstJob",
+    });
+  }
+
+  async run({ name }: { name: string }) {
+    console.log(`Hello, ${data.name}!`);
+  }
+}
 ```
 
 ### Develop
@@ -41,17 +71,5 @@ pnpm build
 To develop all apps and packages, run the following command:
 
 ```
-cd my-turborepo
-pnpm dev
+bun run dev
 ```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)

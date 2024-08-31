@@ -1,5 +1,6 @@
 {
   "name": "tinyjobs",
+  "description": "TinyJobs is tiny user-friendly background jobs framework for JavaScript runtimes.",
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
     "prettier": "^3.3.3",

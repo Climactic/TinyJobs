@@ -1,6 +1,8 @@
 {
   "name": "@tinyjobs/example",
   "module": "src/index.ts",
+  "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "dev": "bun --watch src/index.ts",
