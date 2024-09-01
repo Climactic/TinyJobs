@@ -2,10 +2,19 @@
 TinyJobs is tiny user-friendly background jobs framework for JavaScript runtimes.
 
 ## Getting Started
+
+### Optional
+
+To make it easier to use TinyJobs, you can install the CLI globally:
+
+```bash
+npm i -g tinyjobs
+```
+
 Install the package:
 
 ```bash
-bun i tinyjobs
+npm i tinyjobs
 ```
 
 ## Usage
@@ -13,7 +22,7 @@ bun i tinyjobs
 To make a job, create a new file in the `jobs` directory. You can use the `tinyjobs` CLI to generate a new job:
 
 ```bash
-bunx @tinyjobs/cli init
+tinyjobs init
 ```
 
 This command will create an example job in the `jobs` directory and setup the necessary configuration.
@@ -137,7 +146,7 @@ TinyJobs uses TypeScript to provide type safety for job parameters. You can defi
 Using the CLI, you can generate types that can be added to the TinyJobs client:
 
 ```bash
-bunx @tinyjobs/cli generate types
+tinyjobs generate types
 ```
 
 This will create a `tinyjobs.d.ts` file in the jobs folder configured in your project that you can import in your client code:

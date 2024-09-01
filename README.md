@@ -1,6 +1,16 @@
+<div align="center">
+
 # TinyJobs
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Climactic/TinyJobs/ci.yml?style=flat-square)
+![NPM License](https://img.shields.io/npm/l/tinyjobs?style=flat-square)
+![NPM Version](https://img.shields.io/npm/v/tinyjobs?style=flat-square&label=tinyjobs)
+![NPM Version](https://img.shields.io/npm/v/@tinyjobs/cli?style=flat-square&label=@tinyjobs/cli)
+
+
 TinyJobs is tiny user-friendly background jobs framework for JavaScript runtimes.
+
+</div>
 
 ## What's inside?
 
@@ -8,27 +18,20 @@ This repo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `tinyjobs`: TinyJobs core package that provides the framework for creating and running background jobs.
-- `@tinyjobs/cli`: CLI for managing TinyJobs in your project.
-- `@tinyjobs/example`: Example app that demonstrates how to use TinyJobs.
-- `@tinyjobs/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@tinyjobs/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- [`tinyjobs`](packages/tinyjobs/README.md): TinyJobs core package that provides the framework for creating and running background jobs.
+- [`@tinyjobs/cli`](packages/cli/README.md): CLI for managing TinyJobs in your project.
+- [`@example/app`](apps/example/README.md): Example app that demonstrates how to use TinyJobs.
+- [`@tinyjobs/eslint-config`](packages/eslint-config/README.md): `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- [`@tinyjobs/typescript-config`](packages/typescript-config): `tsconfig.json`s used throughout the monorepo
 
 
 ## CLI
 
-Run the following command:
+Install and use the TinyJobs CLI to manage TinyJobs in your project.
 
 ```sh
-bunx @tinyjobs/cli
+npm i -G @tinyjobs/cli
+tinyjobs
 ```
 
 ## Usage
@@ -66,10 +69,11 @@ export default class FirstJob extends Job {
 }
 ```
 
-### Develop
+## Develop
 
 To develop all apps and packages, run the following command:
 
-```
-bun run dev
+```bash
+bun run dev:packages # run watch modeon packages
+bun run dev:apps # run watch mode on example app
 ```

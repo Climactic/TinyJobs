@@ -1,15 +1,27 @@
 # @tinyjobs/cli
 
-To install dependencies:
+TinyJobs CLI to manage TinyJobs in your project.
+
+## Installation
 
 ```bash
-bun install
+npm install -g @tinyjobs/cli
 ```
 
-To run:
+## Usage
 
 ```bash
-bun run dist/index.js
+tinyjobs
 ```
 
-This project was created using `bun init` in bun v1.1.26. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Commands
+
+- `tinyjobs init` - Initialize TinyJobs in your project.
+- `tinyjobs generate` - Generate a new job or types.
+- `tinyjobs help` - Display help for TinyJobs CLI.
+- `tinyjobs version` - Display version of TinyJobs CLI.
+- `tinyjobs config` - Manage configuration of TinyJobs in your project.
+
+
+## License
+TinyJobs is licensed under the [Apache-2.0](LICENSE).
