@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        redis-version: [6, 7]
+        redis-version: ["7"]
 
     steps:
       - name: Check out code
@@ -53,7 +53,7 @@ jobs:
           redis-version: ${{ matrix.redis-version }}
 
       - name: Test
-        run: bun run test
+        run: bun test
 
       - name: Build
         run: bun run build
