@@ -188,11 +188,11 @@ class TinyJobs<T> {
    * @throws Error if the job name is not unique
    */
   public async registerJob(job: new () => TinyJob) {
-    if (this.jobs.has(job.name))
-      throw new Error(`Job with name ${job.name} already registered.`);
-
     const implementation = new job();
     const { name, cron, delay, conccurency } = implementation;
+
+    if (this.jobs.has(name))
+      throw new Error(`Job with name ${name} already registered.`);
 
     const jobWorker = new Worker(
       this.queue.name,
