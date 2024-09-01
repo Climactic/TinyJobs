@@ -15,14 +15,22 @@ const tinyJobs = new TinyJobs<TinyJobsTypes>({
 await tinyJobs.loadJobs();
 
 // Run Jobs which are not scheduled via cron
-tinyJobs.invoke("exampleJob", { name: "exampleJob" });
-tinyJobs.invoke("delayedJob", { name: "DelayedJob" });
+const cancelJobId = await tinyJobs.invoke("cancelExample");
+await tinyJobs.invoke("exampleJob", { name: "exampleJob" });
+await tinyJobs.invoke("delayedJob", { name: "DelayedJob" });
+
+// Cancel a job
+tinyJobs.cancel("cancelExample", cancelJobId);
 
 // Logging
 tinyJobs.events.on(TinyJobEvents.JOB_COMPLETE, (job) => {
-  console.log(job);
+  console.log("[COMPLETED]\n", job);
 });
 
 tinyJobs.events.on(TinyJobEvents.JOB_FAILED, (job) => {
-  console.error(job);
+  console.error("[FAILED]\n", job);
+});
+
+tinyJobs.events.on(TinyJobEvents.JOB_CANCELLED, (job) => {
+  console.log("[CANCELLED]\n", job);
 });

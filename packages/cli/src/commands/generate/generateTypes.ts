@@ -6,7 +6,7 @@ import { log } from "@clack/prompts";
 
 interface JobTypeDefinition {
   jobName: string;
-  paramsType: string;
+  paramsType?: string;
 }
 
 function extractJobTypes(filePath: string): JobTypeDefinition | null {
@@ -63,13 +63,17 @@ function extractJobTypes(filePath: string): JobTypeDefinition | null {
           const param = member.parameters[0];
           if (param && param.type) {
             paramsType = param.type.getFullText().trim();
+          } else {
+            // If no parameters, set paramsType to an empty object type
+            paramsType = "{}";
           }
         }
       });
     }
   });
 
-  if (jobName && paramsType) {
+  // Return the job type even if paramsType is empty
+  if (jobName) {
     return { jobName, paramsType };
   }
   return null;

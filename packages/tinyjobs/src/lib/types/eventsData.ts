@@ -9,3 +9,8 @@ export type JobFailedData = {
   jobName: string;
   failedReason: string;
 };
+
+export type JobCancelledData = {
+  jobId: string;
+  jobName: string;
+};
