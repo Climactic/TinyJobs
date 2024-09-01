@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "bin": {
-    "tinyjobs": "dist/index.js"
+    "tinyjobs": "./dist/index.js"
   },
   "type": "module",
   "files": [

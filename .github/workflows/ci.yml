@@ -10,9 +10,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+  pull-requests: write
+  packages: write
+
 jobs:
   build:
-    name: Build and Test
+    name: Build and Release
     timeout-minutes: 15
     runs-on: ubuntu-latest
 
@@ -36,8 +41,19 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Lint
+        run: bun run lint # todo: replace with test once we have them
+
       - name: Build
         run: bun run build
 
-      - name: Lint
-        run: bun run lint # todo: replace with test once we have them
+      - uses: changesets/action@v1
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          version: bun run ci:version
+          publish: bun run ci:publish
+          commit: "[ci] release"
+          title: "[ci] release"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
