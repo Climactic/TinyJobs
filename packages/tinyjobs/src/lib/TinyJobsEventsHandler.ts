@@ -3,7 +3,11 @@ import { EventEmitter } from "events";
 import IORedis from "ioredis";
 
 import { TinyJobEvents } from "../types";
-import type { JobCompletedData, JobFailedData } from "./types/eventsData";
+import type {
+  JobCancelledData,
+  JobCompletedData,
+  JobFailedData,
+} from "./types/eventsData";
 import { getJobNameRedisKey } from "../utils/utils";
 
 type TinyJobEventsConstructorTypes = {
@@ -73,6 +77,7 @@ class TinyJobEventsHandler extends EventEmitter {
   // Override the emit method with proper typing
   emit(event: TinyJobEvents.JOB_COMPLETE, job: JobCompletedData): boolean;
   emit(event: TinyJobEvents.JOB_FAILED, job: JobFailedData): boolean;
+  emit(event: TinyJobEvents.JOB_CANCELLED, job: JobCancelledData): boolean;
   emit(event: string | symbol, ...args: any[]): boolean {
     return super.emit(event, ...args);
   }
@@ -85,6 +90,10 @@ class TinyJobEventsHandler extends EventEmitter {
   on(
     event: TinyJobEvents.JOB_FAILED,
     listener: (job: JobFailedData) => void
+  ): this;
+  on(
+    event: TinyJobEvents.JOB_CANCELLED,
+    listener: (job: JobCancelledData) => void
   ): this;
   on(event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener);

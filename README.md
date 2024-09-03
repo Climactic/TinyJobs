@@ -69,6 +69,11 @@ export default class FirstJob extends Job {
 }
 ```
 
+
+## Roadmap
+TinyJobs is not feature complete and still in early stages, you can refer to the roadmap for the list of currently planend features and their progress [here](https://github.com/orgs/Climactic/projects/1/views/4).
+
+
 ## Develop
 
 To develop all apps and packages, run the following command:

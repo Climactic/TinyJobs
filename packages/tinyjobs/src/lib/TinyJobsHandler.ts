@@ -10,6 +10,7 @@ import { generateRandomUid, getJobNameRedisKey } from "../utils/utils";
 import { getConfig } from "../utils/config";
 import { loadJobsFromDir } from "../utils/jobs";
 import { TinyJobEvents } from "../types";
+import { string } from "valibot";
 
 /**
  * TinyJobsConstructorTypes
@@ -299,7 +300,20 @@ class TinyJobs<T> {
       jobName as string
     );
 
-    return queuedJob.id;
+    return queuedJob.id as string;
+  }
+
+  public async cancel<K extends keyof T>(jobName: K, jobId: string) {
+    const job = await this.queue.getJob(jobId);
+    if (!job) throw new Error(`Job with id ${jobId} not found.`);
+
+    await job.remove().then(async () => {
+      await this.redis.hdel(getJobNameRedisKey(jobName as string), jobId);
+      this.events.emit(TinyJobEvents.JOB_CANCELLED, {
+        jobId,
+        jobName: jobName as string,
+      });
+    });
   }
 }
 
